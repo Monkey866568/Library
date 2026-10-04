@@ -15,21 +15,16 @@ function Library:CreateWindow(configName)
 	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	ScreenGui.Parent = playerGui
 
-	-- 2. MainFrame (Kích thước gốc: 664 x 392)
+	-- 2. Khung nền trong suốt tổng thể
 	local MainFrame = Instance.new("Frame")
 	MainFrame.Name = "MainFrame"
-	MainFrame.Size = UDim2.new(0, 664, 0, 392)
-	MainFrame.Position = UDim2.new(0.21154, 0, 0.18374, 0)
-	MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	MainFrame.BackgroundTransparency = 0.65
+	MainFrame.Size = UDim2.new(0, 680, 0, 400)
+	MainFrame.Position = UDim2.new(0.2, 0, 0.18, 0)
+	MainFrame.BackgroundTransparency = 1
 	MainFrame.BorderSizePixel = 0
 	MainFrame.Parent = ScreenGui
 
-	local MainCorner = Instance.new("UICorner")
-	MainCorner.CornerRadius = UDim.new(0, 8)
-	MainCorner.Parent = MainFrame
-
-	-- Nút tròn bên ngoài bật/tắt Menu kèm xoay 360 độ
+	-- Nút tròn bật/tắt Menu bên ngoài
 	local ToggleMenuButton = Instance.new("ImageButton")
 	ToggleMenuButton.Name = "ToggleMenuButton"
 	ToggleMenuButton.Size = UDim2.new(0, 45, 0, 45)
@@ -67,16 +62,42 @@ function Library:CreateWindow(configName)
 		end
 	end)
 
-	-- 3. Sidebar (Chứa danh sách các Tab)
+	-- 3. Khung Sidebar bên trái
+	local LeftContainer = Instance.new("Frame")
+	LeftContainer.Name = "LeftContainer"
+	LeftContainer.Size = UDim2.new(0, 150, 1, 0)
+	LeftContainer.Position = UDim2.new(0, 0, 0, 0)
+	LeftContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	LeftContainer.BackgroundTransparency = 0.65
+	LeftContainer.BorderSizePixel = 0
+	LeftContainer.Parent = MainFrame
+
+	local LeftCorner = Instance.new("UICorner")
+	LeftCorner.CornerRadius = UDim.new(0, 8)
+	LeftCorner.Parent = LeftContainer
+
+	local SidebarDarkBg = Instance.new("Frame")
+	SidebarDarkBg.Name = "SidebarDarkBg"
+	SidebarDarkBg.Size = UDim2.new(1, -20, 1, -40)
+	SidebarDarkBg.Position = UDim2.new(0, 10, 0, 30)
+	SidebarDarkBg.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+	SidebarDarkBg.BackgroundTransparency = 0.3
+	SidebarDarkBg.BorderSizePixel = 0
+	SidebarDarkBg.Parent = LeftContainer
+
+	local SidebarDarkCorner = Instance.new("UICorner")
+	SidebarDarkCorner.CornerRadius = UDim.new(0, 6)
+	SidebarDarkCorner.Parent = SidebarDarkBg
+
 	local Sidebar = Instance.new("ScrollingFrame")
 	Sidebar.Name = "Sidebar"
-	Sidebar.Size = UDim2.new(0, 133, 0, 310)
-	Sidebar.Position = UDim2.new(0.01908, 0, 0.15, 0)
+	Sidebar.Size = UDim2.new(1, -10, 1, -10)
+	Sidebar.Position = UDim2.new(0, 5, 0, 5)
 	Sidebar.BackgroundTransparency = 1
 	Sidebar.BorderSizePixel = 0
 	Sidebar.CanvasSize = UDim2.new(0, 0, 0, 0)
 	Sidebar.ScrollBarThickness = 2
-	Sidebar.Parent = MainFrame
+	Sidebar.Parent = SidebarDarkBg
 
 	local SidebarLayout = Instance.new("UIListLayout")
 	SidebarLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -87,35 +108,50 @@ function Library:CreateWindow(configName)
 		Sidebar.CanvasSize = UDim2.new(0, 0, 0, SidebarLayout.AbsoluteContentSize.Y + 10)
 	end)
 
-	-- 3.1 Hình ảnh logo bên trái/trên Sidebar
-	local SidebarImage = Instance.new("ImageLabel")
-	SidebarImage.Name = "SidebarImage"
-	SidebarImage.Size = UDim2.new(0, 133, 0, 40)
-	SidebarImage.Position = UDim2.new(0.01908, 0, 0.02532, 0)
-	SidebarImage.BackgroundTransparency = 1
-	SidebarImage.BorderSizePixel = 0
-	SidebarImage.Image = "rbxassetid://96966121535917"
-	SidebarImage.ScaleType = Enum.ScaleType.Fit
-	SidebarImage.Parent = MainFrame
+	-- 4. Khung Nội dung chính bên phải
+	local RightContainer = Instance.new("Frame")
+	RightContainer.Name = "RightContainer"
+	RightContainer.Size = UDim2.new(1, -160, 1, 0)
+	RightContainer.Position = UDim2.new(0, 160, 0, 0)
+	RightContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	RightContainer.BackgroundTransparency = 0.65
+	RightContainer.BorderSizePixel = 0
+	RightContainer.Parent = MainFrame
 
-	-- 4. PagesContainer (Khung chứa nội dung các Tab)
+	local RightCorner = Instance.new("UICorner")
+	RightCorner.CornerRadius = UDim.new(0, 8)
+	RightCorner.Parent = RightContainer
+
+	local ContentDarkBg = Instance.new("Frame")
+	ContentDarkBg.Name = "ContentDarkBg"
+	ContentDarkBg.Size = UDim2.new(1, -20, 1, -70)
+	ContentDarkBg.Position = UDim2.new(0, 10, 0, 55)
+	ContentDarkBg.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+	ContentDarkBg.BackgroundTransparency = 0.3
+	ContentDarkBg.BorderSizePixel = 0
+	ContentDarkBg.Parent = RightContainer
+
+	local ContentDarkCorner = Instance.new("UICorner")
+	ContentDarkCorner.CornerRadius = UDim.new(0, 6)
+	ContentDarkCorner.Parent = ContentDarkBg
+
 	local PagesContainer = Instance.new("Frame")
 	PagesContainer.Name = "PagesContainer"
-	PagesContainer.Size = UDim2.new(0, 485, 0, 333)
-	PagesContainer.Position = UDim2.new(0.25596, 0, 0.11899, 0)
+	PagesContainer.Size = UDim2.new(1, -10, 1, -10)
+	PagesContainer.Position = UDim2.new(0, 5, 0, 5)
 	PagesContainer.BackgroundTransparency = 1
 	PagesContainer.BorderSizePixel = 0
-	PagesContainer.Parent = MainFrame
+	PagesContainer.Parent = ContentDarkBg
 
-	-- 5. Avatar & Tên tài khoản
+	-- Avatar & Tên tài khoản
 	local UserAvatar = Instance.new("ImageLabel")
 	UserAvatar.Name = "UserAvatar"
-	UserAvatar.Size = UDim2.new(0, 32, 0, 30)
-	UserAvatar.Position = UDim2.new(0.89269, 0, 0.02532, 0)
+	UserAvatar.Size = UDim2.new(0, 30, 0, 30)
+	UserAvatar.Position = UDim2.new(1, -40, 0, 15)
 	UserAvatar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	UserAvatar.BorderSizePixel = 0
 	UserAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
-	UserAvatar.Parent = MainFrame
+	UserAvatar.Parent = RightContainer
 
 	local AvatarCorner = Instance.new("UICorner")
 	AvatarCorner.CornerRadius = UDim.new(0, 50)
@@ -124,14 +160,14 @@ function Library:CreateWindow(configName)
 	local UserNameLabel = Instance.new("TextLabel")
 	UserNameLabel.Name = "UserNameLabel"
 	UserNameLabel.Size = UDim2.new(0, 150, 0, 30)
-	UserNameLabel.Position = UDim2.new(0.89269, -158, 0.02532, 0)
+	UserNameLabel.Position = UDim2.new(1, -195, 0, 15)
 	UserNameLabel.BackgroundTransparency = 1
 	UserNameLabel.Text = localPlayer.DisplayName
 	UserNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 	UserNameLabel.TextSize = 13
 	UserNameLabel.TextXAlignment = Enum.TextXAlignment.Right
 	UserNameLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	UserNameLabel.Parent = MainFrame
+	UserNameLabel.Parent = RightContainer
 
 	task.spawn(function()
 		local success, content = pcall(function()
@@ -142,17 +178,17 @@ function Library:CreateWindow(configName)
 		end
 	end)
 
-	-- 6. Nút Phóng to / Thu nhỏ (Maximize) & Nút Đóng (Close)
+	-- Nút Phóng to & Đóng
 	local CloseButton = Instance.new("TextButton")
 	CloseButton.Name = "CloseButton"
-	CloseButton.Size = UDim2.new(0, 30, 0, 30)
-	CloseButton.Position = UDim2.new(0.94, 0, 0.88, 0)
+	CloseButton.Size = UDim2.new(0, 25, 0, 25)
+	CloseButton.Position = UDim2.new(1, -35, 1, -28)
 	CloseButton.BackgroundTransparency = 1
 	CloseButton.Text = "X"
 	CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-	CloseButton.TextSize = 16
+	CloseButton.TextSize = 15
 	CloseButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	CloseButton.Parent = MainFrame
+	CloseButton.Parent = RightContainer
 
 	CloseButton.MouseButton1Click:Connect(function()
 		ScreenGui.Enabled = false
@@ -160,14 +196,14 @@ function Library:CreateWindow(configName)
 
 	local MaximizeButton = Instance.new("TextButton")
 	MaximizeButton.Name = "MaximizeButton"
-	MaximizeButton.Size = UDim2.new(0, 30, 0, 30)
-	MaximizeButton.Position = UDim2.new(0.88, 0, 0.88, 0)
+	MaximizeButton.Size = UDim2.new(0, 25, 0, 25)
+	MaximizeButton.Position = UDim2.new(1, -65, 1, -28)
 	MaximizeButton.BackgroundTransparency = 1
 	MaximizeButton.Text = "□"
 	MaximizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-	MaximizeButton.TextSize = 16
+	MaximizeButton.TextSize = 15
 	MaximizeButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	MaximizeButton.Parent = MainFrame
+	MaximizeButton.Parent = RightContainer
 
 	local isMaximized = false
 	MaximizeButton.MouseButton1Click:Connect(function()
@@ -178,11 +214,11 @@ function Library:CreateWindow(configName)
 			TweenService:Create(MainFrame, tweenInfo, {Size = UDim2.new(0, 850, 0, 500)}):Play()
 		else
 			MaximizeButton.Text = "□"
-			TweenService:Create(MainFrame, tweenInfo, {Size = UDim2.new(0, 664, 0, 392)}):Play()
+			TweenService:Create(MainFrame, tweenInfo, {Size = UDim2.new(0, 680, 0, 400)}):Play()
 		end
 	end)
 
-	-- 7. Kéo thả MainFrame
+	-- Kéo thả MainFrame
 	local dragging, dragInput, dragStart, startPos
 	MainFrame.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -210,7 +246,7 @@ function Library:CreateWindow(configName)
 		end
 	end)
 
-	-- 8. Các phương thức quản lý Tab & Thành phần UI
+	-- Quản lý Tab & Thành phần UI
 	local Window = {}
 	local firstTab = true
 
@@ -218,7 +254,7 @@ function Library:CreateWindow(configName)
 		local TabButton = Instance.new("TextButton")
 		TabButton.Name = "Btn_" .. tabName
 		TabButton.Size = UDim2.new(1, 0, 0, 35)
-		TabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		TabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 		TabButton.BackgroundTransparency = 0.5
 		TabButton.BorderSizePixel = 0
 		TabButton.Text = "  " .. tabName
@@ -231,6 +267,20 @@ function Library:CreateWindow(configName)
 		local BtnCorner = Instance.new("UICorner")
 		BtnCorner.CornerRadius = UDim.new(0, 6)
 		BtnCorner.Parent = TabButton
+
+		-- Thanh vạch trắng Neon ở mép PHẢI của nút Tab (kiểu tab =|)
+		local Indicator = Instance.new("Frame")
+		Indicator.Name = "Indicator"
+		Indicator.Size = UDim2.new(0, 3, 0, 20)
+		Indicator.Position = UDim2.new(1, -5, 0.5, -10)
+		Indicator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Indicator.BorderSizePixel = 0
+		Indicator.Visible = false
+		Indicator.Parent = TabButton
+
+		local IndCorner = Instance.new("UICorner")
+		IndCorner.CornerRadius = UDim.new(1, 0)
+		IndCorner.Parent = Indicator
 
 		local TabPage = Instance.new("ScrollingFrame")
 		TabPage.Name = "Page_" .. tabName
@@ -259,11 +309,14 @@ function Library:CreateWindow(configName)
 				if child:IsA("TextButton") then 
 					child.TextColor3 = Color3.fromRGB(150, 150, 150)
 					child.BackgroundTransparency = 0.5
+					local ind = child:FindFirstChild("Indicator")
+					if ind then ind.Visible = false end
 				end
 			end
 			TabPage.Visible = true
 			TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 			TabButton.BackgroundTransparency = 0.2
+			Indicator.Visible = true
 		end)
 
 		if firstTab then
@@ -271,6 +324,7 @@ function Library:CreateWindow(configName)
 			TabPage.Visible = true
 			TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 			TabButton.BackgroundTransparency = 0.2
+			Indicator.Visible = true
 		end
 
 		local TabObj = {}
@@ -298,7 +352,7 @@ function Library:CreateWindow(configName)
 
 			local ToggleBtn = Instance.new("TextButton")
 			ToggleBtn.Size = UDim2.new(1, -10, 0, 38)
-			ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			ToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 			ToggleBtn.BackgroundTransparency = 0.3
 			ToggleBtn.BorderSizePixel = 0
 			ToggleBtn.AutoButtonColor = false
@@ -322,7 +376,7 @@ function Library:CreateWindow(configName)
 			local SquareBox = Instance.new("Frame")
 			SquareBox.Size = UDim2.new(0, 20, 0, 20)
 			SquareBox.Position = UDim2.new(1, -30, 0.5, -10)
-			SquareBox.BackgroundColor3 = defaultState and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
+			SquareBox.BackgroundColor3 = defaultState and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(25, 25, 25)
 			SquareBox.BackgroundTransparency = defaultState and 0 or 1
 			SquareBox.BorderSizePixel = 0
 			SquareBox.Parent = ToggleBtn
@@ -339,7 +393,7 @@ function Library:CreateWindow(configName)
 			local toggled = defaultState
 			ToggleBtn.MouseButton1Click:Connect(function()
 				toggled = not toggled
-				SquareBox.BackgroundColor3 = toggled and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
+				SquareBox.BackgroundColor3 = toggled and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(25, 25, 25)
 				SquareBox.BackgroundTransparency = toggled and 0 or 1
 				task.spawn(function() pcall(callback, toggled) end)
 			end)
@@ -352,7 +406,7 @@ function Library:CreateWindow(configName)
 
 			local DropdownFrame = Instance.new("Frame")
 			DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
-			DropdownFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			DropdownFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 			DropdownFrame.BackgroundTransparency = 0.3
 			DropdownFrame.BorderSizePixel = 0
 			DropdownFrame.ClipsDescendants = true
@@ -371,6 +425,19 @@ function Library:CreateWindow(configName)
 			TitleBtn.TextXAlignment = Enum.TextXAlignment.Left
 			TitleBtn.Parent = DropdownFrame
 
+			-- Thêm Icon > ở mục dropdown
+			local ArrowIcon = Instance.new("TextLabel")
+			ArrowIcon.Name = "ArrowIcon"
+			ArrowIcon.Size = UDim2.new(0, 30, 0, 38)
+			ArrowIcon.Position = UDim2.new(1, -35, 0, 0)
+			ArrowIcon.BackgroundTransparency = 1
+			ArrowIcon.Text = ">"
+			ArrowIcon.TextColor3 = Color3.fromRGB(180, 180, 180)
+			ArrowIcon.TextSize = 14
+			ArrowIcon.TextXAlignment = Enum.TextXAlignment.Center
+			ArrowIcon.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+			ArrowIcon.Parent = TitleBtn
+
 			local DropdownListLayout = Instance.new("UIListLayout")
 			DropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 			DropdownListLayout.Padding = UDim.new(0, 2)
@@ -381,10 +448,13 @@ function Library:CreateWindow(configName)
 
 			TitleBtn.MouseButton1Click:Connect(function()
 				isOpen = not isOpen
+				local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 				if isOpen then
 					DropdownFrame.Size = UDim2.new(1, -10, 0, 38 + (#optionsList * 32) + 5)
+					TweenService:Create(ArrowIcon, tweenInfo, {Rotation = 90}):Play()
 				else
 					DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
+					TweenService:Create(ArrowIcon, tweenInfo, {Rotation = 0}):Play()
 				end
 			end)
 
@@ -408,6 +478,7 @@ function Library:CreateWindow(configName)
 					TitleBtn.Text = "  " .. dropdownName .. ": " .. tostring(selectedVal)
 					isOpen = false
 					DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
+					TweenService:Create(ArrowIcon, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play()
 					task.spawn(function() pcall(callback, selectedVal) end)
 				end)
 			end
