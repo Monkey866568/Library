@@ -1,3 +1,12 @@
+--[=[
+ d888b  db   db d888888b     .d888b.     db   db   db  .d8b.  
+88' Y8b 88   88   `88'       VP  `8D     88   88   88 d8' `8b 
+88      88   88    88           odD'     88   88   88 88ooo88 
+88  ooo 88   88    88         .88'       88   88   88 88~~~88 
+88. ~8~ 88b d88   .88.       j88.        88booo. 88b  d88 88   88     @uniquadev
+ Y888P  ~Y8888P' Y888888P      888888D     Y88888P ~Y8888P' YP   YP  CONVERTER 
+]=]
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -26,6 +35,49 @@ function Library:CreateWindow(config)
 	MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	MainFrame.Parent = ScreenGui
 
+	-- Bo góc MainFrame
+	local MainCorner = Instance.new("UICorner")
+	MainCorner.CornerRadius = UDim.new(0, 8)
+	MainCorner.Parent = MainFrame
+
+	-- Nút tròn bên ngoài để bật/tắt Menu kèm hiệu ứng xoay 360 độ
+	local ToggleMenuButton = Instance.new("ImageButton")
+	ToggleMenuButton.Name = "ToggleMenuButton"
+	ToggleMenuButton.Size = UDim2.new(0, 45, 0, 45)
+	ToggleMenuButton.Position = UDim2.new(0.05, 0, 0.1, 0)
+	ToggleMenuButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	ToggleMenuButton.BackgroundTransparency = 0.4
+	ToggleMenuButton.BorderSizePixel = 0
+	ToggleMenuButton.Image = "rbxassetid://96966121535917" -- Có thể thay ID ảnh tùy ý bạn
+	ToggleMenuButton.Parent = ScreenGui
+
+	local ToggleButtonCorner = Instance.new("UICorner")
+	ToggleMenuButtonCorner.CornerRadius = UDim.new(1, 0)
+	ToggleMenuButtonCorner.Parent = ToggleMenuButton
+
+	local ToggleButtonStroke = Instance.new("UIStroke")
+	ToggleButtonStroke.Color = Color3.fromRGB(255, 255, 255)
+	ToggleButtonStroke.Thickness = 1.5
+	ToggleButtonStroke.Parent = ToggleMenuButton
+
+	local menuVisible = true
+	local isRotating = false
+
+	ToggleMenuButton.MouseButton1Click:Connect(function()
+		menuVisible = not menuVisible
+		MainFrame.Visible = menuVisible
+
+		if not isRotating then
+			isRotating = true
+			local tweenInfo = TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+			local currentRotation = ToggleMenuButton.Rotation
+			TweenService:Create(ToggleMenuButton, tweenInfo, {Rotation = currentRotation + 360}):Play()
+			task.delay(0.4, function()
+				isRotating = false
+			end)
+		end
+	end)
+
 	-- 3. Sidebar
 	local Sidebar = Instance.new("Frame")
 	Sidebar.Name = "Sidebar"
@@ -37,6 +89,27 @@ function Library:CreateWindow(config)
 	Sidebar.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Sidebar.Parent = MainFrame
 
+	-- Bo góc Sidebar
+	local SidebarCorner = Instance.new("UICorner")
+	SidebarCorner.CornerRadius = UDim.new(0, 6)
+	SidebarCorner.Parent = Sidebar
+
+	-- 3.1 Hình ảnh bên phải Sidebar
+	local SidebarImage = Instance.new("ImageLabel")
+	SidebarImage.Name = "SidebarImage"
+	SidebarImage.Size = UDim2.new(0, 100, 0, 100)
+	SidebarImage.Position = UDim2.new(0, 142, 0.02532, 0)
+	SidebarImage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	SidebarImage.BackgroundTransparency = 0.5
+	SidebarImage.BorderSizePixel = 0
+	SidebarImage.Image = "rbxassetid://96966121535917"
+	SidebarImage.Parent = MainFrame
+
+	-- Bo góc cho ImageLabel
+	local SidebarImageCorner = Instance.new("UICorner")
+	SidebarImageCorner.CornerRadius = UDim.new(0, 6)
+	SidebarImageCorner.Parent = SidebarImage
+
 	-- 4. PagesContainer
 	local PagesContainer = Instance.new("Frame")
 	PagesContainer.Name = "PagesContainer"
@@ -47,6 +120,11 @@ function Library:CreateWindow(config)
 	PagesContainer.BorderSizePixel = 0
 	PagesContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	PagesContainer.Parent = MainFrame
+
+	-- Bo góc PagesContainer
+	local PagesCorner = Instance.new("UICorner")
+	PagesCorner.CornerRadius = UDim.new(0, 6)
+	PagesCorner.Parent = PagesContainer
 
 	-- 5. Avatar ImageLabel
 	local UserAvatar = Instance.new("ImageLabel")
@@ -62,6 +140,19 @@ function Library:CreateWindow(config)
 	local AvatarCorner = Instance.new("UICorner")
 	AvatarCorner.CornerRadius = UDim.new(0, 50)
 	AvatarCorner.Parent = UserAvatar
+
+	-- Hiển thị tên tài khoản bên trái Avatar
+	local UserNameLabel = Instance.new("TextLabel")
+	UserNameLabel.Name = "UserNameLabel"
+	UserNameLabel.Size = UDim2.new(0, 150, 0, 30)
+	UserNameLabel.Position = UDim2.new(0.89269, -158, 0.02532, 0)
+	UserNameLabel.BackgroundTransparency = 1
+	UserNameLabel.Text = localPlayer.DisplayName
+	UserNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	UserNameLabel.TextSize = 13
+	UserNameLabel.TextXAlignment = Enum.TextXAlignment.Right
+	UserNameLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	UserNameLabel.Parent = MainFrame
 
 	task.spawn(function()
 		local success, content = pcall(function()
@@ -123,27 +214,29 @@ function Library:CreateWindow(config)
 			}
 		end
 	end
+	
+	originalData[SidebarImage] = { Size = SidebarImage.Size, Position = SidebarImage.Position }
 
 	local isMaximized = false
-	local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local tweenInfoMax = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
 	MaximizeButton.MouseButton1Click:Connect(function()
 		if not isMaximized then
-			TweenService:Create(MainFrame, tweenInfo, {Size = targetMainSize, Position = targetMainPos}):Play()
+			TweenService:Create(MainFrame, tweenInfoMax, {Size = targetMainSize, Position = targetMainPos}):Play()
 			for obj, data in pairs(originalData) do
 				if obj and obj.Parent then
 					local newSize = UDim2.new(data.Size.X.Scale, data.Size.X.Offset * scaleX, data.Size.Y.Scale, data.Size.Y.Offset * scaleY)
 					local newPos = UDim2.new(data.Position.X.Scale, data.Position.X.Offset * scaleX, data.Position.Y.Scale, data.Position.Y.Offset * scaleY)
-					TweenService:Create(obj, tweenInfo, {Size = newSize, Position = newPos}):Play()
+					TweenService:Create(obj, tweenInfoMax, {Size = newSize, Position = newPos}):Play()
 				end
 			end
 			isMaximized = true
 			MaximizeButton.Text = "❐"
 		else
-			TweenService:Create(MainFrame, tweenInfo, {Size = normalMainSize, Position = normalMainPos}):Play()
+			TweenService:Create(MainFrame, tweenInfoMax, {Size = normalMainSize, Position = normalMainPos}):Play()
 			for obj, data in pairs(originalData) do
 				if obj and obj.Parent then
-					TweenService:Create(obj, tweenInfo, {Size = data.Size, Position = data.Position}):Play()
+					TweenService:Create(obj, tweenInfoMax, {Size = data.Size, Position = data.Position}):Play()
 				end
 			end
 			isMaximized = false
@@ -180,7 +273,8 @@ function Library:CreateWindow(config)
 	end)
 
 	local Window = {}
-	
+	local firstTab = true
+
 	function Window:AddTab(tabName)
 		local TabButton = Instance.new("TextButton")
 		TabButton.Name = "Btn" .. tabName
@@ -194,7 +288,21 @@ function Library:CreateWindow(config)
 		TabButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
 		TabButton.Parent = Sidebar
 
-		local TabPage = Instance.new("ScrollingFrame") -- Đổi thành ScrollingFrame để chứa nhiều item không bị tràn
+		-- Thanh viền chỉ báo (Indicator Bar) bên phải màu trắng neon
+		local Indicator = Instance.new("Frame")
+		Indicator.Name = "Indicator"
+		Indicator.Size = UDim2.new(0, 4, 0, 20)
+		Indicator.Position = UDim2.new(1, -8, 0.5, -10)
+		Indicator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Indicator.BorderSizePixel = 0
+		Indicator.Visible = false
+		Indicator.Parent = TabButton
+
+		local IndicatorCorner = Instance.new("UICorner")
+		IndicatorCorner.CornerRadius = UDim.new(1, 0)
+		IndicatorCorner.Parent = Indicator
+
+		local TabPage = Instance.new("ScrollingFrame")
 		TabPage.Name = "Page" .. tabName
 		TabPage.Size = UDim2.new(1, 0, 1, 0)
 		TabPage.BackgroundTransparency = 1
@@ -221,15 +329,56 @@ function Library:CreateWindow(config)
 				if child:IsA("ScrollingFrame") then child.Visible = false end
 			end
 			for _, child in ipairs(Sidebar:GetChildren()) do
-				if child:IsA("TextButton") then child.TextColor3 = Color3.fromRGB(150, 150, 150) end
+				if child:IsA("TextButton") then 
+					child.TextColor3 = Color3.fromRGB(150, 150, 150)
+					local ind = child:FindFirstChild("Indicator")
+					if ind then ind.Visible = false end
+				end
 			end
 			TabPage.Visible = true
 			TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+			Indicator.Visible = true
 		end)
+
+		-- Tự động chọn tab đầu tiên
+		if firstTab then
+			firstTab = false
+			TabPage.Visible = true
+			TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+			Indicator.Visible = true
+		end
 
 		local TabObj = {}
 
-		-- ** HÀM THÊM TOGGLE (BẬT / TẮT CHỨC NĂNG) **
+		-- Thêm tiêu đề phân mục (Section Header) có viền trắng neon bên dưới
+		function TabObj:AddSection(sectionName)
+			local SectionFrame = Instance.new("Frame")
+			SectionFrame.Name = "Section_" .. sectionName
+			SectionFrame.Size = UDim2.new(1, -10, 0, 30)
+			SectionFrame.BackgroundTransparency = 1
+			SectionFrame.BorderSizePixel = 0
+			SectionFrame.Parent = TabPage
+
+			local SectionLabel = Instance.new("TextLabel")
+			SectionLabel.Size = UDim2.new(1, 0, 1, -2)
+			SectionLabel.BackgroundTransparency = 1
+			SectionLabel.Text = sectionName
+			SectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+			SectionLabel.TextSize = 14
+			SectionLabel.TextXAlignment = Enum.TextXAlignment.Center
+			SectionLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+			SectionLabel.Parent = SectionFrame
+
+			local SectionLine = Instance.new("Frame")
+			SectionLine.Size = UDim2.new(1, 0, 0, 2)
+			SectionLine.Position = UDim2.new(0, 0, 1, -2)
+			SectionLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			SectionLine.BorderSizePixel = 0
+			SectionLine.Parent = SectionFrame
+
+			originalData[SectionFrame] = { Size = SectionFrame.Size, Position = SectionFrame.Position }
+		end
+
 		function TabObj:AddToggle(toggleName, defaultState, callback)
 			defaultState = defaultState or false
 			callback = callback or function() end
@@ -259,38 +408,31 @@ function Library:CreateWindow(config)
 			TitleLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
 			TitleLabel.Parent = ToggleButton
 
-			-- Khung Switch nhỏ bên phải
-			local SwitchBg = Instance.new("Frame")
-			SwitchBg.Size = UDim2.new(0, 38, 0, 20)
-			SwitchBg.Position = UDim2.new(1, -46, 0.5, -10)
-			SwitchBg.BackgroundColor3 = defaultState and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(50, 50, 50)
-			SwitchBg.BorderSizePixel = 0
-			SwitchBg.Parent = ToggleButton
+			local SquareBox = Instance.new("Frame")
+			SquareBox.Size = UDim2.new(0, 20, 0, 20)
+			SquareBox.Position = UDim2.new(1, -30, 0.5, -10)
+			SquareBox.BackgroundColor3 = defaultState and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
+			SquareBox.BackgroundTransparency = defaultState and 0 or 1
+			SquareBox.BorderSizePixel = 0
+			SquareBox.Parent = ToggleButton
 
-			local SwitchCorner = Instance.new("UICorner")
-			SwitchCorner.CornerRadius = UDim.new(1, 0)
-			SwitchCorner.Parent = SwitchBg
+			local SquareCorner = Instance.new("UICorner")
+			SquareCorner.CornerRadius = UDim.new(0, 4)
+			SquareCorner.Parent = SquareBox
 
-			local SwitchCircle = Instance.new("Frame")
-			SwitchCircle.Size = UDim2.new(0, 16, 0, 16)
-			SwitchCircle.Position = defaultState and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
-			SwitchCircle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			SwitchCircle.BorderSizePixel = 0
-			SwitchCircle.Parent = SwitchBg
-
-			local CircleCorner = Instance.new("UICorner")
-			CircleCorner.CornerRadius = UDim.new(1, 0)
-			CircleCorner.Parent = SwitchCircle
+			local SquareStroke = Instance.new("UIStroke")
+			SquareStroke.Color = Color3.fromRGB(255, 255, 255)
+			SquareStroke.Thickness = 1.5
+			SquareStroke.Parent = SquareBox
 
 			local toggled = defaultState
 
 			local function updateToggle(state)
 				toggled = state
-				local goalBgColor = toggled and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(50, 50, 50)
-				local goalCirclePos = toggled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+				local goalBgColor = toggled and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
+				local goalTransparency = toggled and 0 or 1
 
-				TweenService:Create(SwitchBg, TweenInfo.new(0.2), {BackgroundColor3 = goalBgColor}):Play()
-				TweenService:Create(SwitchCircle, TweenInfo.new(0.2), {Position = goalCirclePos}):Play()
+				TweenService:Create(SquareBox, TweenInfo.new(0.2), {BackgroundColor3 = goalBgColor, BackgroundTransparency = goalTransparency}):Play()
 
 				task.spawn(function()
 					pcall(callback, toggled)
@@ -313,7 +455,6 @@ function Library:CreateWindow(config)
 			}
 		end
 
-		-- ** HÀM THÊM SLIDER (KÉO CHỈNH THÔNG SỐ) **
 		function TabObj:AddSlider(sliderName, minVal, maxVal, defaultVal, callback)
 			minVal = minVal or 0
 			maxVal = maxVal or 100
@@ -354,7 +495,6 @@ function Library:CreateWindow(config)
 			ValueLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 			ValueLabel.Parent = SliderFrame
 
-			-- Thanh chứa slider
 			local SliderBar = Instance.new("Frame")
 			SliderBar.Size = UDim2.new(1, -24, 0, 6)
 			SliderBar.Position = UDim2.new(0, 12, 0, 34)
@@ -366,7 +506,6 @@ function Library:CreateWindow(config)
 			BarCorner.CornerRadius = UDim.new(1, 0)
 			BarCorner.Parent = SliderBar
 
-			-- Phần màu xanh thể hiện giá trị đã kéo
 			local SliderFill = Instance.new("Frame")
 			local initScale = math.clamp((defaultVal - minVal) / (maxVal - minVal), 0, 1)
 			SliderFill.Size = UDim2.new(initScale, 0, 1, 0)
