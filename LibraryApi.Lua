@@ -24,7 +24,7 @@ function Library:CreateWindow(configName)
 	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	ScreenGui.Parent = playerGui
 
-	-- 2. MainFrame
+	-- 2. MainFrame (Kích thước gốc: 664 x 392)
 	local MainFrame = Instance.new("Frame")
 	MainFrame.Name = "MainFrame"
 	MainFrame.Size = UDim2.new(0, 664, 0, 392)
@@ -151,7 +151,7 @@ function Library:CreateWindow(configName)
 		end
 	end)
 
-	-- 6. Nút Đóng
+	-- 6. Nút Phóng to / Thu nhỏ (Maximize) & Nút Đóng (Close)
 	local CloseButton = Instance.new("TextButton")
 	CloseButton.Name = "CloseButton"
 	CloseButton.Size = UDim2.new(0, 30, 0, 30)
@@ -165,6 +165,30 @@ function Library:CreateWindow(configName)
 
 	CloseButton.MouseButton1Click:Connect(function()
 		ScreenGui.Enabled = false
+	end)
+
+	local MaximizeButton = Instance.new("TextButton")
+	MaximizeButton.Name = "MaximizeButton"
+	MaximizeButton.Size = UDim2.new(0, 30, 0, 30)
+	MaximizeButton.Position = UDim2.new(0.88, 0, 0.88, 0)
+	MaximizeButton.BackgroundTransparency = 1
+	MaximizeButton.Text = "□"
+	MaximizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	MaximizeButton.TextSize = 16
+	MaximizeButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	MaximizeButton.Parent = MainFrame
+
+	local isMaximized = false
+	MaximizeButton.MouseButton1Click:Connect(function()
+		isMaximized = not isMaximized
+		local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		if isMaximized then
+			MaximizeButton.Text = "❐"
+			TweenService:Create(MainFrame, tweenInfo, {Size = UDim2.new(0, 850, 0, 500)}):Play()
+		else
+			MaximizeButton.Text = "□"
+			TweenService:Create(MainFrame, tweenInfo, {Size = UDim2.new(0, 664, 0, 392)}):Play()
+		end
 	end)
 
 	-- 7. Kéo thả MainFrame
@@ -356,6 +380,11 @@ function Library:CreateWindow(configName)
 			TitleBtn.TextXAlignment = Enum.TextXAlignment.Left
 			TitleBtn.Parent = DropdownFrame
 
+			local DropdownListLayout = Instance.new("UIListLayout")
+			DropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			DropdownListLayout.Padding = UDim.new(0, 2)
+			DropdownListLayout.Parent = DropdownFrame
+
 			local isOpen = false
 			local selectedVal = defaultOption
 
@@ -371,7 +400,6 @@ function Library:CreateWindow(configName)
 			for _, opt in ipairs(optionsList) do
 				local OptBtn = Instance.new("TextButton")
 				OptBtn.Size = UDim2.new(1, -16, 0, 30)
-				OptBtn.Position = UDim2.new(0, 8, 0, 0)
 				OptBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 				OptBtn.BackgroundTransparency = 0.5
 				OptBtn.BorderSizePixel = 0
