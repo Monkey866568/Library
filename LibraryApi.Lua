@@ -167,7 +167,7 @@ function Library:CreateWindow(configName)
 		ScreenGui.Enabled = false
 	end)
 
-	-- 7. Kéo thả MainFrame (Đã sửa lỗi cú pháp ở đây)
+	-- 7. Kéo thả MainFrame
 	local dragging, dragInput, dragStart, startPos
 	MainFrame.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -195,7 +195,208 @@ function Library:CreateWindow(configName)
 		end
 	end)
 
+	-- 8. Các phương thức quản lý Tab & Thành phần UI
 	local Window = {}
+	local firstTab = true
+
+	function Window:AddTab(tabName)
+		local TabButton = Instance.new("TextButton")
+		TabButton.Name = "Btn_" .. tabName
+		TabButton.Size = UDim2.new(1, 0, 0, 35)
+		TabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		TabButton.BackgroundTransparency = 0.5
+		TabButton.BorderSizePixel = 0
+		TabButton.Text = "  " .. tabName
+		TabButton.TextColor3 = Color3.fromRGB(150, 150, 150)
+		TabButton.TextSize = 14
+		TabButton.TextXAlignment = Enum.TextXAlignment.Left
+		TabButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+		TabButton.Parent = Sidebar
+
+		local BtnCorner = Instance.new("UICorner")
+		BtnCorner.CornerRadius = UDim.new(0, 6)
+		BtnCorner.Parent = TabButton
+
+		local TabPage = Instance.new("ScrollingFrame")
+		TabPage.Name = "Page_" .. tabName
+		TabPage.Size = UDim2.new(1, 0, 1, 0)
+		TabPage.BackgroundTransparency = 1
+		TabPage.BorderSizePixel = 0
+		TabPage.Visible = false
+		TabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
+		TabPage.ScrollBarThickness = 4
+		TabPage.Parent = PagesContainer
+
+		local PageLayout = Instance.new("UIListLayout")
+		PageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		PageLayout.Padding = UDim.new(0, 6)
+		PageLayout.Parent = TabPage
+
+		PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+			TabPage.CanvasSize = UDim2.new(0, 0, 0, PageLayout.AbsoluteContentSize.Y + 10)
+		end)
+
+		TabButton.MouseButton1Click:Connect(function()
+			for _, child in ipairs(PagesContainer:GetChildren()) do
+				if child:IsA("ScrollingFrame") then child.Visible = false end
+			end
+			for _, child in ipairs(Sidebar:GetChildren()) do
+				if child:IsA("TextButton") then 
+					child.TextColor3 = Color3.fromRGB(150, 150, 150)
+					child.BackgroundTransparency = 0.5
+				end
+			end
+			TabPage.Visible = true
+			TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+			TabButton.BackgroundTransparency = 0.2
+		end)
+
+		if firstTab then
+			firstTab = false
+			TabPage.Visible = true
+			TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+			TabButton.BackgroundTransparency = 0.2
+		end
+
+		local TabObj = {}
+
+		function TabObj:AddSection(sectionName)
+			local SectionFrame = Instance.new("Frame")
+			SectionFrame.Size = UDim2.new(1, -10, 0, 25)
+			SectionFrame.BackgroundTransparency = 1
+			SectionFrame.Parent = TabPage
+
+			local SectionLabel = Instance.new("TextLabel")
+			SectionLabel.Size = UDim2.new(1, 0, 1, 0)
+			SectionLabel.BackgroundTransparency = 1
+			SectionLabel.Text = sectionName
+			SectionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+			SectionLabel.TextSize = 13
+			SectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+			SectionLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+			SectionLabel.Parent = SectionFrame
+		end
+
+		function TabObj:AddToggle(toggleName, defaultState, callback)
+			defaultState = defaultState or false
+			callback = callback or function() end
+
+			local ToggleBtn = Instance.new("TextButton")
+			ToggleBtn.Size = UDim2.new(1, -10, 0, 38)
+			ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			ToggleBtn.BackgroundTransparency = 0.3
+			ToggleBtn.BorderSizePixel = 0
+			ToggleBtn.AutoButtonColor = false
+			ToggleBtn.Text = ""
+			ToggleBtn.Parent = TabPage
+
+			local Corner = Instance.new("UICorner")
+			Corner.CornerRadius = UDim.new(0, 6)
+			Corner.Parent = ToggleBtn
+
+			local Title = Instance.new("TextLabel")
+			Title.Size = UDim2.new(1, -50, 1, 0)
+			Title.Position = UDim2.new(0, 12, 0, 0)
+			Title.BackgroundTransparency = 1
+			Title.Text = toggleName
+			Title.TextColor3 = Color3.fromRGB(220, 220, 220)
+			Title.TextSize = 14
+			Title.TextXAlignment = Enum.TextXAlignment.Left
+			Title.Parent = ToggleBtn
+
+			local SquareBox = Instance.new("Frame")
+			SquareBox.Size = UDim2.new(0, 20, 0, 20)
+			SquareBox.Position = UDim2.new(1, -30, 0.5, -10)
+			SquareBox.BackgroundColor3 = defaultState and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
+			SquareBox.BackgroundTransparency = defaultState and 0 or 1
+			SquareBox.BorderSizePixel = 0
+			SquareBox.Parent = ToggleBtn
+
+			local BoxCorner = Instance.new("UICorner")
+			BoxCorner.CornerRadius = UDim.new(0, 4)
+			BoxCorner.Parent = SquareBox
+
+			local BoxStroke = Instance.new("UIStroke")
+			BoxStroke.Color = Color3.fromRGB(255, 255, 255)
+			BoxStroke.Thickness = 1.5
+			BoxStroke.Parent = SquareBox
+
+			local toggled = defaultState
+			ToggleBtn.MouseButton1Click:Connect(function()
+				toggled = not toggled
+				SquareBox.BackgroundColor3 = toggled and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
+				SquareBox.BackgroundTransparency = toggled and 0 or 1
+				task.spawn(function() pcall(callback, toggled) end)
+			end)
+		end
+
+		function TabObj:AddDropdown(dropdownName, optionsList, defaultOption, callback)
+			optionsList = optionsList or {}
+			defaultOption = defaultOption or optionsList[1] or ""
+			callback = callback or function() end
+
+			local DropdownFrame = Instance.new("Frame")
+			DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
+			DropdownFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			DropdownFrame.BackgroundTransparency = 0.3
+			DropdownFrame.BorderSizePixel = 0
+			DropdownFrame.ClipsDescendants = true
+			DropdownFrame.Parent = TabPage
+
+			local Corner = Instance.new("UICorner")
+			Corner.CornerRadius = UDim.new(0, 6)
+			Corner.Parent = DropdownFrame
+
+			local TitleBtn = Instance.new("TextButton")
+			TitleBtn.Size = UDim2.new(1, 0, 0, 38)
+			TitleBtn.BackgroundTransparency = 1
+			TitleBtn.Text = "  " .. dropdownName .. ": " .. tostring(defaultOption)
+			TitleBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+			TitleBtn.TextSize = 14
+			TitleBtn.TextXAlignment = Enum.TextXAlignment.Left
+			TitleBtn.Parent = DropdownFrame
+
+			local isOpen = false
+			local selectedVal = defaultOption
+
+			TitleBtn.MouseButton1Click:Connect(function()
+				isOpen = not isOpen
+				if isOpen then
+					DropdownFrame.Size = UDim2.new(1, -10, 0, 38 + (#optionsList * 32) + 5)
+				else
+					DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
+				end
+			end)
+
+			for _, opt in ipairs(optionsList) do
+				local OptBtn = Instance.new("TextButton")
+				OptBtn.Size = UDim2.new(1, -16, 0, 30)
+				OptBtn.Position = UDim2.new(0, 8, 0, 0)
+				OptBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				OptBtn.BackgroundTransparency = 0.5
+				OptBtn.BorderSizePixel = 0
+				OptBtn.Text = tostring(opt)
+				OptBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+				OptBtn.TextSize = 13
+				OptBtn.Parent = DropdownFrame
+
+				local OptCorner = Instance.new("UICorner")
+				OptCorner.CornerRadius = UDim.new(0, 4)
+				OptCorner.Parent = OptBtn
+
+				OptBtn.MouseButton1Click:Connect(function()
+					selectedVal = opt
+					TitleBtn.Text = "  " .. dropdownName .. ": " .. tostring(selectedVal)
+					isOpen = false
+					DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
+					task.spawn(function() pcall(callback, selectedVal) end)
+				end)
+			end
+		end
+
+		return TabObj
+	end
+
 	return Window
 end
 
