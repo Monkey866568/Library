@@ -15,7 +15,7 @@ local playerGui = localPlayer:WaitForChild("PlayerGui")
 
 local Library = {}
 
-function Library:CreateWindow(config)
+function Library:CreateWindow(configName)
 	local windowName = configName or "MyUI"
 	
 	-- 1. ScreenGui chính
@@ -32,15 +32,13 @@ function Library:CreateWindow(config)
 	MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	MainFrame.BackgroundTransparency = 0.65
 	MainFrame.BorderSizePixel = 0
-	MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	MainFrame.Parent = ScreenGui
 
-	-- Bo góc MainFrame
 	local MainCorner = Instance.new("UICorner")
 	MainCorner.CornerRadius = UDim.new(0, 8)
 	MainCorner.Parent = MainFrame
 
-	-- Nút tròn bên ngoài để bật/tắt Menu kèm hiệu ứng xoay 360 độ
+	-- Nút tròn bên ngoài bật/tắt Menu kèm xoay 360 độ
 	local ToggleMenuButton = Instance.new("ImageButton")
 	ToggleMenuButton.Name = "ToggleMenuButton"
 	ToggleMenuButton.Size = UDim2.new(0, 45, 0, 45)
@@ -48,12 +46,12 @@ function Library:CreateWindow(config)
 	ToggleMenuButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	ToggleMenuButton.BackgroundTransparency = 0.4
 	ToggleMenuButton.BorderSizePixel = 0
-	ToggleMenuButton.Image = "rbxassetid://96966121535917" -- Có thể thay ID ảnh tùy ý bạn
+	ToggleMenuButton.Image = "rbxassetid://96966121535917"
 	ToggleMenuButton.Parent = ScreenGui
 
 	local ToggleButtonCorner = Instance.new("UICorner")
-	ToggleMenuButtonCorner.CornerRadius = UDim.new(1, 0)
-	ToggleMenuButtonCorner.Parent = ToggleMenuButton
+	ToggleButtonCorner.CornerRadius = UDim.new(1, 0)
+	ToggleButtonCorner.Parent = ToggleMenuButton
 
 	local ToggleButtonStroke = Instance.new("UIStroke")
 	ToggleButtonStroke.Color = Color3.fromRGB(255, 255, 255)
@@ -78,62 +76,53 @@ function Library:CreateWindow(config)
 		end
 	end)
 
-	-- 3. Sidebar
-	local Sidebar = Instance.new("Frame")
+	-- 3. Sidebar (Chứa danh sách các Tab)
+	local Sidebar = Instance.new("ScrollingFrame")
 	Sidebar.Name = "Sidebar"
-	Sidebar.Size = UDim2.new(0, 133, 0, 370)
-	Sidebar.Position = UDim2.new(0.01908, 0, 0.02532, 0)
-	Sidebar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	Sidebar.BackgroundTransparency = 0.4
+	Sidebar.Size = UDim2.new(0, 133, 0, 310)
+	Sidebar.Position = UDim2.new(0.01908, 0, 0.15, 0)
+	Sidebar.BackgroundTransparency = 1
 	Sidebar.BorderSizePixel = 0
-	Sidebar.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Sidebar.CanvasSize = UDim2.new(0, 0, 0, 0)
+	Sidebar.ScrollBarThickness = 2
 	Sidebar.Parent = MainFrame
 
-	-- Bo góc Sidebar
-	local SidebarCorner = Instance.new("UICorner")
-	SidebarCorner.CornerRadius = UDim.new(0, 6)
-	SidebarCorner.Parent = Sidebar
+	local SidebarLayout = Instance.new("UIListLayout")
+	SidebarLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	SidebarLayout.Padding = UDim.new(0, 5)
+	SidebarLayout.Parent = Sidebar
 
-	-- 3.1 Hình ảnh bên phải Sidebar
+	SidebarLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		Sidebar.CanvasSize = UDim2.new(0, 0, 0, SidebarLayout.AbsoluteContentSize.Y + 10)
+	end)
+
+	-- 3.1 Hình ảnh logo bên trái/trên Sidebar
 	local SidebarImage = Instance.new("ImageLabel")
 	SidebarImage.Name = "SidebarImage"
-	SidebarImage.Size = UDim2.new(0, 100, 0, 100)
-	SidebarImage.Position = UDim2.new(0, 142, 0.02532, 0)
-	SidebarImage.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	SidebarImage.BackgroundTransparency = 0.5
+	SidebarImage.Size = UDim2.new(0, 133, 0, 40)
+	SidebarImage.Position = UDim2.new(0.01908, 0, 0.02532, 0)
+	SidebarImage.BackgroundTransparency = 1
 	SidebarImage.BorderSizePixel = 0
 	SidebarImage.Image = "rbxassetid://96966121535917"
+	SidebarImage.ScaleType = Enum.ScaleType.Fit
 	SidebarImage.Parent = MainFrame
 
-	-- Bo góc cho ImageLabel
-	local SidebarImageCorner = Instance.new("UICorner")
-	SidebarImageCorner.CornerRadius = UDim.new(0, 6)
-	SidebarImageCorner.Parent = SidebarImage
-
-	-- 4. PagesContainer
+	-- 4. PagesContainer (Khung chứa nội dung các Tab)
 	local PagesContainer = Instance.new("Frame")
 	PagesContainer.Name = "PagesContainer"
-	PagesContainer.Size = UDim2.new(0, 451, 0, 333)
+	PagesContainer.Size = UDim2.new(0, 485, 0, 333)
 	PagesContainer.Position = UDim2.new(0.25596, 0, 0.11899, 0)
-	PagesContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	PagesContainer.BackgroundTransparency = 0.5
+	PagesContainer.BackgroundTransparency = 1
 	PagesContainer.BorderSizePixel = 0
-	PagesContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	PagesContainer.Parent = MainFrame
 
-	-- Bo góc PagesContainer
-	local PagesCorner = Instance.new("UICorner")
-	PagesCorner.CornerRadius = UDim.new(0, 6)
-	PagesCorner.Parent = PagesContainer
-
-	-- 5. Avatar ImageLabel
+	-- 5. Avatar & Tên tài khoản
 	local UserAvatar = Instance.new("ImageLabel")
 	UserAvatar.Name = "UserAvatar"
 	UserAvatar.Size = UDim2.new(0, 32, 0, 30)
 	UserAvatar.Position = UDim2.new(0.89269, 0, 0.02532, 0)
 	UserAvatar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	UserAvatar.BorderSizePixel = 0
-	UserAvatar.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	UserAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
 	UserAvatar.Parent = MainFrame
 
@@ -141,7 +130,6 @@ function Library:CreateWindow(config)
 	AvatarCorner.CornerRadius = UDim.new(0, 50)
 	AvatarCorner.Parent = UserAvatar
 
-	-- Hiển thị tên tài khoản bên trái Avatar
 	local UserNameLabel = Instance.new("TextLabel")
 	UserNameLabel.Name = "UserNameLabel"
 	UserNameLabel.Size = UDim2.new(0, 150, 0, 30)
@@ -163,88 +151,23 @@ function Library:CreateWindow(config)
 		end
 	end)
 
-	-- 6. Nút Đóng (CloseButton)
+	-- 6. Nút Đóng
 	local CloseButton = Instance.new("TextButton")
 	CloseButton.Name = "CloseButton"
-	CloseButton.Size = UDim2.new(0, 39, 0, 41)
-	CloseButton.Position = UDim2.new(0.94088, 0, 0.86224, 0)
-	CloseButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	CloseButton.BackgroundTransparency = 3
-	CloseButton.BorderSizePixel = 0
-	CloseButton.BorderColor3 = Color3.fromRGB(255, 255, 255)
+	CloseButton.Size = UDim2.new(0, 30, 0, 30)
+	CloseButton.Position = UDim2.new(0.94, 0, 0.88, 0)
+	CloseButton.BackgroundTransparency = 1
 	CloseButton.Text = "X"
-	CloseButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-	CloseButton.TextSize = 14
-	CloseButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CloseButton.TextSize = 16
+	CloseButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 	CloseButton.Parent = MainFrame
 
 	CloseButton.MouseButton1Click:Connect(function()
 		ScreenGui.Enabled = false
 	end)
 
-	-- 7. Nút Phóng To / Thu Nhỏ (MaximizeButton)
-	local MaximizeButton = Instance.new("TextButton")
-	MaximizeButton.Name = "MaximizeButton"
-	MaximizeButton.Size = UDim2.new(0, 38, 0, 37)
-	MaximizeButton.Position = UDim2.new(0.94088, 0, 0.7449, 0)
-	MaximizeButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	MaximizeButton.BackgroundTransparency = 3
-	MaximizeButton.BorderSizePixel = 0
-	MaximizeButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	MaximizeButton.Text = "□"
-	MaximizeButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-	MaximizeButton.TextSize = 14
-	MaximizeButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-	MaximizeButton.Parent = MainFrame
-
-	local normalMainSize = MainFrame.Size
-	local normalMainPos = MainFrame.Position
-	local targetMainSize = UDim2.new(0, 980, 0, 600)
-	local targetMainPos = UDim2.new(0.5, -490, 0.5, -300)
-
-	local scaleX = targetMainSize.X.Offset / normalMainSize.X.Offset
-	local scaleY = targetMainSize.Y.Offset / normalMainSize.Y.Offset
-
-	local originalData = {}
-	for _, descendant in ipairs(MainFrame:GetDescendants()) do
-		if descendant:IsA("GuiObject") then
-			originalData[descendant] = {
-				Size = descendant.Size,
-				Position = descendant.Position
-			}
-		end
-	end
-	
-	originalData[SidebarImage] = { Size = SidebarImage.Size, Position = SidebarImage.Position }
-
-	local isMaximized = false
-	local tweenInfoMax = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-
-	MaximizeButton.MouseButton1Click:Connect(function()
-		if not isMaximized then
-			TweenService:Create(MainFrame, tweenInfoMax, {Size = targetMainSize, Position = targetMainPos}):Play()
-			for obj, data in pairs(originalData) do
-				if obj and obj.Parent then
-					local newSize = UDim2.new(data.Size.X.Scale, data.Size.X.Offset * scaleX, data.Size.Y.Scale, data.Size.Y.Offset * scaleY)
-					local newPos = UDim2.new(data.Position.X.Scale, data.Position.X.Offset * scaleX, data.Position.Y.Scale, data.Position.Y.Offset * scaleY)
-					TweenService:Create(obj, tweenInfoMax, {Size = newSize, Position = newPos}):Play()
-				end
-			end
-			isMaximized = true
-			MaximizeButton.Text = "❐"
-		else
-			TweenService:Create(MainFrame, tweenInfoMax, {Size = normalMainSize, Position = normalMainPos}):Play()
-			for obj, data in pairs(originalData) do
-				if obj and obj.Parent then
-					TweenService:Create(obj, tweenInfoMax, {Size = data.Size, Position = data.Position}):Play()
-				end
-			end
-			isMaximized = false
-			MaximizeButton.Text = "□"
-		end
-	end)
-
-	-- 8. Kéo thả MainFrame (Draggable)
+	-- 7. Kéo thả MainFrame
 	local dragging, dragInput, dragStart, startPos
 	MainFrame.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -260,50 +183,124 @@ function Library:CreateWindow(config)
 	end)
 
 	MainFrame.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			dragInput = input
+		if input.UserInputType == Enum.À, hiện giao diện đầy đủ (khung chính) nhưng **không thấy hiện các Tab ở thanh Sidebar** đúng không? 
+
+Lỗi này thường xảy ra do hàm `Window:AddTab(tabName)` trong file thư viện trên GitHub của bạn bị thiếu logic tạo nút hoặc thiếu đoạn gắn `Parent` cho nút Tab vào Sidebar.
+
+Để sửa triệt để lỗi này, bạn hãy vào GitHub chỉnh sửa lại nội dung file **`LibraryApi.Lua`** của bạn thành đoạn code chuẩn bên dưới nhé:
+
+### Code sửa lại cho file `LibraryApi.Lua` trên GitHub:
+
+Hãy mở file `LibraryApi.Lua` trên GitHub, xóa hết nội dung cũ và dán đoạn code này vào, sau đó ấn **Commit changes** (lưu lại):
+
+```lua
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local localPlayer = Players.LocalPlayer
+local playerGui = localPlayer:WaitForChild("PlayerGui")
+
+local Library = {}
+
+function Library:CreateWindow(configName)
+	local windowName = configName or "MyUI"
+	
+	local ScreenGui = Instance.new("ScreenGui")
+	ScreenGui.Name = windowName
+	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	ScreenGui.Parent = playerGui
+
+	local MainFrame = Instance.new("Frame")
+	MainFrame.Name = "MainFrame"
+	MainFrame.Size = UDim2.new(0, 664, 0, 392)
+	MainFrame.Position = UDim2.new(0.21154, 0, 0.18374, 0)
+	MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	MainFrame.BackgroundTransparency = 0.65
+	MainFrame.BorderSizePixel = 0
+	MainFrame.Parent = ScreenGui
+
+	local MainCorner = Instance.new("UICorner")
+	MainCorner.CornerRadius = UDim.new(0, 8)
+	MainCorner.Parent = MainFrame
+
+	-- Nút tròn mở/đóng menu xoay 360 độ ở ngoài
+	local ToggleMenuButton = Instance.new("ImageButton")
+	ToggleMenuButton.Name = "ToggleMenuButton"
+	ToggleMenuButton.Size = UDim2.new(0, 45, 0, 45)
+	ToggleMenuButton.Position = UDim2.new(0.05, 0, 0.1, 0)
+	ToggleMenuButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	ToggleMenuButton.BackgroundTransparency = 0.4
+	ToggleMenuButton.BorderSizePixel = 0
+	ToggleMenuButton.Image = "rbxassetid://96966121535917"
+	ToggleMenuButton.Parent = ScreenGui
+
+	local ToggleButtonCorner = Instance.new("UICorner")
+	ToggleButtonCorner.CornerRadius = UDim.new(1, 0)
+	ToggleButtonCorner.Parent = ToggleMenuButton
+
+	local menuVisible = true
+	local isRotating = false
+
+	ToggleMenuButton.MouseButton1Click:Connect(function()
+		menuVisible = not menuVisible
+		MainFrame.Visible = menuVisible
+		if not isRotating then
+			isRotating = true
+			local tweenInfo = TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+			TweenService:Create(ToggleMenuButton, tweenInfo, {Rotation = ToggleMenuButton.Rotation + 360}):Play()
+			task.delay(0.4, function() isRotating = false end)
 		end
 	end)
 
-	UserInputService.InputChanged:Connect(function(input)
-		if input == dragInput and dragging then
-			local delta = input.Position - dragStart
-			MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-		end
-	end)
+	-- Sidebar chứa các Tab
+	local Sidebar = Instance.new("ScrollingFrame")
+	Sidebar.Name = "Sidebar"
+	Sidebar.Size = UDim2.new(0, 133, 0, 310)
+	Sidebar.Position = UDim2.new(0.01908, 0, 0.02532, 0)
+	Sidebar.BackgroundTransparency = 1
+	Sidebar.BorderSizePixel = 0
+	Sidebar.ScrollBarThickness = 2
+	Sidebar.Parent = MainFrame
+
+	local SidebarLayout = Instance.new("UIListLayout")
+	SidebarLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	SidebarLayout.Padding = UDim.new(0, 5)
+	SidebarLayout.Parent = Sidebar
+
+	-- PagesContainer chứa nội dung của từng Tab
+	local PagesContainer = Instance.new("Frame")
+	PagesContainer.Name = "PagesContainer"
+	PagesContainer.Size = UDim2.new(0, 451, 0, 333)
+	PagesContainer.Position = UDim2.new(0.25596, 0, 0.11899, 0)
+	PagesContainer.BackgroundTransparency = 1
+	PagesContainer.BorderSizePixel = 0
+	PagesContainer.Parent = MainFrame
 
 	local Window = {}
 	local firstTab = true
 
 	function Window:AddTab(tabName)
+		-- Tạo nút Tab trong Sidebar
 		local TabButton = Instance.new("TextButton")
-		TabButton.Name = "Btn" .. tabName
-		TabButton.Size = UDim2.new(0, 133, 0, 37)
-		TabButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		TabButton.BackgroundTransparency = 0.3
+		TabButton.Name = "Btn_" .. tabName
+		TabButton.Size = UDim2.new(1, 0, 0, 35)
+		TabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		TabButton.BackgroundTransparency = 0.5
 		TabButton.BorderSizePixel = 0
-		TabButton.Text = tabName
+		TabButton.Text = "  " .. tabName
 		TabButton.TextColor3 = Color3.fromRGB(150, 150, 150)
 		TabButton.TextSize = 14
+		TabButton.TextXAlignment = Enum.TextXAlignment.Left
 		TabButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-		TabButton.Parent = Sidebar
+		TabButton.Parent = Sidebar -- Đảm bảo nút được đưa vào Sidebar
 
-		-- Thanh viền chỉ báo (Indicator Bar) bên phải màu trắng neon
-		local Indicator = Instance.new("Frame")
-		Indicator.Name = "Indicator"
-		Indicator.Size = UDim2.new(0, 4, 0, 20)
-		Indicator.Position = UDim2.new(1, -8, 0.5, -10)
-		Indicator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Indicator.BorderSizePixel = 0
-		Indicator.Visible = false
-		Indicator.Parent = TabButton
+		local BtnCorner = Instance.new("UICorner")
+		BtnCorner.CornerRadius = UDim.new(0, 6)
+		BtnCorner.Parent = TabButton
 
-		local IndicatorCorner = Instance.new("UICorner")
-		IndicatorCorner.CornerRadius = UDim.new(1, 0)
-		IndicatorCorner.Parent = Indicator
-
+		-- Tạo trang nội dung (Page) tương ứng cho Tab
 		local TabPage = Instance.new("ScrollingFrame")
-		TabPage.Name = "Page" .. tabName
+		TabPage.Name = "Page_" .. tabName
 		TabPage.Size = UDim2.new(1, 0, 1, 0)
 		TabPage.BackgroundTransparency = 1
 		TabPage.BorderSizePixel = 0
@@ -312,18 +309,16 @@ function Library:CreateWindow(config)
 		TabPage.ScrollBarThickness = 4
 		TabPage.Parent = PagesContainer
 
-		local UIListLayout = Instance.new("UIListLayout")
-		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		UIListLayout.Padding = UDim.new(0, 6)
-		UIListLayout.Parent = TabPage
+		local PageLayout = Instance.new("UIListLayout")
+		PageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		PageLayout.Padding = UDim.new(0, 6)
+		PageLayout.Parent = TabPage
 
-		UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-			TabPage.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+		PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+			TabPage.CanvasSize = UDim2.new(0, 0, 0, PageLayout.AbsoluteContentSize.Y + 10)
 		end)
 
-		originalData[TabButton] = { Size = TabButton.Size, Position = TabButton.Position }
-		originalData[TabPage] = { Size = TabPage.Size, Position = TabPage.Position }
-
+		-- Xử lý sự kiện bấm chuyển Tab
 		TabButton.MouseButton1Click:Connect(function()
 			for _, child in ipairs(PagesContainer:GetChildren()) do
 				if child:IsA("ScrollingFrame") then child.Visible = false end
@@ -331,82 +326,67 @@ function Library:CreateWindow(config)
 			for _, child in ipairs(Sidebar:GetChildren()) do
 				if child:IsA("TextButton") then 
 					child.TextColor3 = Color3.fromRGB(150, 150, 150)
-					local ind = child:FindFirstChild("Indicator")
-					if ind then ind.Visible = false end
+					child.BackgroundTransparency = 0.5
 				end
 			end
 			TabPage.Visible = true
 			TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-			Indicator.Visible = true
+			TabButton.BackgroundTransparency = 0.2
 		end)
 
-		-- Tự động chọn tab đầu tiên
+		-- Mặc định mở Tab đầu tiên
 		if firstTab then
 			firstTab = false
 			TabPage.Visible = true
 			TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-			Indicator.Visible = true
+			TabButton.BackgroundTransparency = 0.2
 		end
 
 		local TabObj = {}
 
-		-- Thêm tiêu đề phân mục (Section Header) có viền trắng neon bên dưới
 		function TabObj:AddSection(sectionName)
 			local SectionFrame = Instance.new("Frame")
-			SectionFrame.Name = "Section_" .. sectionName
-			SectionFrame.Size = UDim2.new(1, -10, 0, 30)
+			SectionFrame.Size = UDim2.new(1, -10, 0, 25)
 			SectionFrame.BackgroundTransparency = 1
-			SectionFrame.BorderSizePixel = 0
 			SectionFrame.Parent = TabPage
 
 			local SectionLabel = Instance.new("TextLabel")
-			SectionLabel.Size = UDim2.new(1, 0, 1, -2)
+			SectionLabel.Size = UDim2.new(1, 0, 1, 0)
 			SectionLabel.BackgroundTransparency = 1
 			SectionLabel.Text = sectionName
-			SectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-			SectionLabel.TextSize = 14
-			SectionLabel.TextXAlignment = Enum.TextXAlignment.Center
+			SectionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+			SectionLabel.TextSize = 13
+			SectionLabel.TextXAlignment = Enum.TextXAlignment.Left
 			SectionLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 			SectionLabel.Parent = SectionFrame
-
-			local SectionLine = Instance.new("Frame")
-			SectionLine.Size = UDim2.new(1, 0, 0, 2)
-			SectionLine.Position = UDim2.new(0, 0, 1, -2)
-			SectionLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			SectionLine.BorderSizePixel = 0
-			SectionLine.Parent = SectionFrame
-
-			originalData[SectionFrame] = { Size = SectionFrame.Size, Position = SectionFrame.Position }
 		end
 
 		function TabObj:AddToggle(toggleName, defaultState, callback)
 			defaultState = defaultState or false
 			callback = callback or function() end
 
-			local ToggleButton = Instance.new("TextButton")
-			ToggleButton.Name = "Toggle_" .. toggleName
-			ToggleButton.Size = UDim2.new(1, -10, 0, 38)
-			ToggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-			ToggleButton.BackgroundTransparency = 0.3
-			ToggleButton.BorderSizePixel = 0
-			ToggleButton.AutoButtonColor = false
-			ToggleButton.Text = ""
-			ToggleButton.Parent = TabPage
+			local ToggleBtn = Instance.new("TextButton")
+			ToggleBtn.Size = UDim2.new(1, -10, 0, 38)
+			ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			ToggleBtn.BackgroundTransparency = 0.3
+			ToggleBtn.BorderSizePixel = 0
+			ToggleBtn.AutoButtonColor = false
+			ToggleBtn.Text = ""
+			ToggleBtn.Parent = TabPage
 
-			local UICorner = Instance.new("UICorner")
-			UICorner.CornerRadius = UDim.new(0, 6)
-			UICorner.Parent = ToggleButton
+			local Corner = Instance.new("UICorner")
+			Corner.CornerRadius = UDim.new(0, 6)
+			Corner.Parent = ToggleBtn
 
-			local TitleLabel = Instance.new("TextLabel")
-			TitleLabel.Size = UDim2.new(1, -50, 1, 0)
-			TitleLabel.Position = UDim2.new(0, 12, 0, 0)
-			TitleLabel.BackgroundTransparency = 1
-			TitleLabel.Text = toggleName
-			TitleLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
-			TitleLabel.TextSize = 14
-			TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-			TitleLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-			TitleLabel.Parent = ToggleButton
+			local Title = Instance.new("TextLabel")
+			Title.Size = UDim2.new(1, -50, 1, 0)
+			Title.Position = UDim2.new(0, 12, 0, 0)
+			Title.BackgroundTransparency = 1
+			Title.Text = toggleName
+			Title.TextColor3 = Color3.fromRGB(220, 220, 220)
+			Title.TextSize = 14
+			Title.TextXAlignment = Enum.TextXAlignment.Left
+			Title.Parent = ToggleBtn
 
 			local SquareBox = Instance.new("Frame")
 			SquareBox.Size = UDim2.new(0, 20, 0, 20)
@@ -414,158 +394,93 @@ function Library:CreateWindow(config)
 			SquareBox.BackgroundColor3 = defaultState and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
 			SquareBox.BackgroundTransparency = defaultState and 0 or 1
 			SquareBox.BorderSizePixel = 0
-			SquareBox.Parent = ToggleButton
+			SquareBox.Parent = ToggleBtn
 
-			local SquareCorner = Instance.new("UICorner")
-			SquareCorner.CornerRadius = UDim.new(0, 4)
-			SquareCorner.Parent = SquareBox
+			local BoxCorner = Instance.new("UICorner")
+			BoxCorner.CornerRadius = UDim.new(0, 4)
+			BoxCorner.Parent = SquareBox
 
-			local SquareStroke = Instance.new("UIStroke")
-			SquareStroke.Color = Color3.fromRGB(255, 255, 255)
-			SquareStroke.Thickness = 1.5
-			SquareStroke.Parent = SquareBox
+			local BoxStroke = Instance.new("UIStroke")
+			BoxStroke.Color = Color3.fromRGB(255, 255, 255)
+			BoxStroke.Thickness = 1.5
+			BoxStroke.Parent = SquareBox
 
 			local toggled = defaultState
-
-			local function updateToggle(state)
-				toggled = state
-				local goalBgColor = toggled and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
-				local goalTransparency = toggled and 0 or 1
-
-				TweenService:Create(SquareBox, TweenInfo.new(0.2), {BackgroundColor3 = goalBgColor, BackgroundTransparency = goalTransparency}):Play()
-
-				task.spawn(function()
-					pcall(callback, toggled)
-				end)
-			end
-
-			ToggleButton.MouseButton1Click:Connect(function()
-				updateToggle(not toggled)
+			ToggleBtn.MouseButton1Click:Connect(function()
+				toggled = not toggled
+				SquareBox.BackgroundColor3 = toggled and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(20, 20, 20)
+				SquareBox.BackgroundTransparency = toggled and 0 or 1
+				task.spawn(function() pcall(callback, toggled) end)
 			end)
-
-			originalData[ToggleButton] = { Size = ToggleButton.Size, Position = ToggleButton.Position }
-
-			return {
-				Set = function(state)
-					updateToggle(state)
-				end,
-				Get = function()
-					return toggled
-				end
-			}
 		end
 
-		function TabObj:AddSlider(sliderName, minVal, maxVal, defaultVal, callback)
-			minVal = minVal or 0
-			maxVal = maxVal or 100
-			defaultVal = defaultVal or minVal
+		function TabObj:AddDropdown(dropdownName, optionsList, defaultOption, callback)
+			optionsList = optionsList or {}
+			defaultOption = defaultOption or optionsList[1] or ""
 			callback = callback or function() end
 
-			local SliderFrame = Instance.new("Frame")
-			SliderFrame.Name = "Slider_" .. sliderName
-			SliderFrame.Size = UDim2.new(1, -10, 0, 50)
-			SliderFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-			SliderFrame.BackgroundTransparency = 0.3
-			SliderFrame.BorderSizePixel = 0
-			SliderFrame.Parent = TabPage
+			local DropdownFrame = Instance.new("Frame")
+			DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
+			DropdownFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			DropdownFrame.BackgroundTransparency = 0.3
+			DropdownFrame.BorderSizePixel = 0
+			DropdownFrame.ClipsDescendants = true
+			DropdownFrame.Parent = TabPage
 
-			local UICorner = Instance.new("UICorner")
-			UICorner.CornerRadius = UDim.new(0, 6)
-			UICorner.Parent = SliderFrame
+			local Corner = Instance.new("UICorner")
+			Corner.CornerRadius = UDim.new(0, 6)
+			Corner.Parent = DropdownFrame
 
-			local TitleLabel = Instance.new("TextLabel")
-			TitleLabel.Size = UDim2.new(1, -24, 0, 25)
-			TitleLabel.Position = UDim2.new(0, 12, 0, 4)
-			TitleLabel.BackgroundTransparency = 1
-			TitleLabel.Text = sliderName
-			TitleLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
-			TitleLabel.TextSize = 14
-			TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-			TitleLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-			TitleLabel.Parent = SliderFrame
+			local TitleBtn = Instance.new("TextButton")
+			TitleBtn.Size = UDim2.new(1, 0, 0, 38)
+			TitleBtn.BackgroundTransparency = 1
+			TitleBtn.Text = "  " .. dropdownName .. ": " .. tostring(defaultOption)
+			TitleBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+			TitleBtn.TextSize = 14
+			TitleBtn.TextXAlignment = Enum.TextXAlignment.Left
+			TitleBtn.Parent = DropdownFrame
 
-			local ValueLabel = Instance.new("TextLabel")
-			ValueLabel.Size = UDim2.new(0, 50, 0, 25)
-			ValueLabel.Position = UDim2.new(1, -62, 0, 4)
-			ValueLabel.BackgroundTransparency = 1
-			ValueLabel.Text = tostring(defaultVal)
-			ValueLabel.TextColor3 = Color3.fromRGB(0, 170, 255)
-			ValueLabel.TextSize = 14
-			ValueLabel.TextXAlignment = Enum.TextXAlignment.Right
-			ValueLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-			ValueLabel.Parent = SliderFrame
+			local ListLayout = Instance.new("UIListLayout")
+			ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			ListLayout.Padding = UDim.new(0, 2)
+			ListLayout.Parent = DropdownFrame
 
-			local SliderBar = Instance.new("Frame")
-			SliderBar.Size = UDim2.new(1, -24, 0, 6)
-			SliderBar.Position = UDim2.new(0, 12, 0, 34)
-			SliderBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-			SliderBar.BorderSizePixel = 0
-			SliderBar.Parent = SliderFrame
+			local isOpen = false
+			local selectedVal = defaultOption
 
-			local BarCorner = Instance.new("UICorner")
-			BarCorner.CornerRadius = UDim.new(1, 0)
-			BarCorner.Parent = SliderBar
+			TitleBtn.MouseButton1Click:Connect(function()
+				isOpen = not isOpen
+				if isOpen then
+					DropdownFrame.Size = UDim2.new(1, -10, 0, 38 + (#optionsList * 32) + 5)
+				else
+					DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
+				end
+			end)
 
-			local SliderFill = Instance.new("Frame")
-			local initScale = math.clamp((defaultVal - minVal) / (maxVal - minVal), 0, 1)
-			SliderFill.Size = UDim2.new(initScale, 0, 1, 0)
-			SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-			SliderFill.BorderSizePixel = 0
-			SliderFill.Parent = SliderBar
+			for _, opt in ipairs(optionsList) do
+				local OptBtn = Instance.new("TextButton")
+				OptBtn.Size = UDim2.new(1, -16, 0, 30)
+				OptBtn.Position = UDim2.new(0, 8, 0, 0)
+				OptBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				OptBtn.BackgroundTransparency = 0.5
+				OptBtn.BorderSizePixel = 0
+				OptBtn.Text = tostring(opt)
+				OptBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+				OptBtn.TextSize = 13
+				OptBtn.Parent = DropdownFrame
 
-			local FillCorner = Instance.new("UICorner")
-			FillCorner.CornerRadius = UDim.new(1, 0)
-			FillCorner.Parent = SliderFill
+				local OptCorner = Instance.new("UICorner")
+				OptCorner.CornerRadius = UDim.new(0, 4)
+				OptCorner.Parent = OptBtn
 
-			local currentVal = defaultVal
-			local draggingSlider = false
-
-			local function updateSlider(input)
-				local pos = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
-				local val = math.floor(minVal + ((maxVal - minVal) * pos))
-				
-				SliderFill.Size = UDim2.new(pos, 0, 1, 0)
-				ValueLabel.Text = tostring(val)
-				currentVal = val
-
-				task.spawn(function()
-					pcall(callback, currentVal)
+				OptBtn.MouseButton1Click:Connect(function()
+					selectedVal = opt
+					TitleBtn.Text = "  " .. dropdownName .. ": " .. tostring(selectedVal)
+					isOpen = false
+					DropdownFrame.Size = UDim2.new(1, -10, 0, 38)
+					task.spawn(function() pcall(callback, selectedVal) end)
 				end)
 			end
-
-			SliderBar.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					draggingSlider = true
-					updateSlider(input)
-				end
-			end)
-
-			UserInputService.InputEnded:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					draggingSlider = false
-				end
-			end)
-
-			UserInputService.InputChanged:Connect(function(input)
-				if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-					updateSlider(input)
-				end
-			end)
-
-			originalData[SliderFrame] = { Size = SliderFrame.Size, Position = SliderFrame.Position }
-
-			return {
-				Get = function()
-					return currentVal
-				end,
-				Set = function(val)
-					currentVal = math.clamp(val, minVal, maxVal)
-					local pos = (currentVal - minVal) / (maxVal - minVal)
-					SliderFill.Size = UDim2.new(pos, 0, 1, 0)
-					ValueLabel.Text = tostring(currentVal)
-					pcall(callback, currentVal)
-				end
-			}
 		end
 
 		return TabObj
