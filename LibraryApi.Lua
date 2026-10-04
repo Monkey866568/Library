@@ -313,6 +313,122 @@ function Library:CreateWindow(config)
 			}
 		end
 
+		-- ** HÀM THÊM SLIDER (KÉO CHỈNH THÔNG SỐ) **
+		function TabObj:AddSlider(sliderName, minVal, maxVal, defaultVal, callback)
+			minVal = minVal or 0
+			maxVal = maxVal or 100
+			defaultVal = defaultVal or minVal
+			callback = callback or function() end
+
+			local SliderFrame = Instance.new("Frame")
+			SliderFrame.Name = "Slider_" .. sliderName
+			SliderFrame.Size = UDim2.new(1, -10, 0, 50)
+			SliderFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			SliderFrame.BackgroundTransparency = 0.3
+			SliderFrame.BorderSizePixel = 0
+			SliderFrame.Parent = TabPage
+
+			local UICorner = Instance.new("UICorner")
+			UICorner.CornerRadius = UDim.new(0, 6)
+			UICorner.Parent = SliderFrame
+
+			local TitleLabel = Instance.new("TextLabel")
+			TitleLabel.Size = UDim2.new(1, -24, 0, 25)
+			TitleLabel.Position = UDim2.new(0, 12, 0, 4)
+			TitleLabel.BackgroundTransparency = 1
+			TitleLabel.Text = sliderName
+			TitleLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+			TitleLabel.TextSize = 14
+			TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+			TitleLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+			TitleLabel.Parent = SliderFrame
+
+			local ValueLabel = Instance.new("TextLabel")
+			ValueLabel.Size = UDim2.new(0, 50, 0, 25)
+			ValueLabel.Position = UDim2.new(1, -62, 0, 4)
+			ValueLabel.BackgroundTransparency = 1
+			ValueLabel.Text = tostring(defaultVal)
+			ValueLabel.TextColor3 = Color3.fromRGB(0, 170, 255)
+			ValueLabel.TextSize = 14
+			ValueLabel.TextXAlignment = Enum.TextXAlignment.Right
+			ValueLabel.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+			ValueLabel.Parent = SliderFrame
+
+			-- Thanh chứa slider
+			local SliderBar = Instance.new("Frame")
+			SliderBar.Size = UDim2.new(1, -24, 0, 6)
+			SliderBar.Position = UDim2.new(0, 12, 0, 34)
+			SliderBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+			SliderBar.BorderSizePixel = 0
+			SliderBar.Parent = SliderFrame
+
+			local BarCorner = Instance.new("UICorner")
+			BarCorner.CornerRadius = UDim.new(1, 0)
+			BarCorner.Parent = SliderBar
+
+			-- Phần màu xanh thể hiện giá trị đã kéo
+			local SliderFill = Instance.new("Frame")
+			local initScale = math.clamp((defaultVal - minVal) / (maxVal - minVal), 0, 1)
+			SliderFill.Size = UDim2.new(initScale, 0, 1, 0)
+			SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+			SliderFill.BorderSizePixel = 0
+			SliderFill.Parent = SliderBar
+
+			local FillCorner = Instance.new("UICorner")
+			FillCorner.CornerRadius = UDim.new(1, 0)
+			FillCorner.Parent = SliderFill
+
+			local currentVal = defaultVal
+			local draggingSlider = false
+
+			local function updateSlider(input)
+				local pos = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
+				local val = math.floor(minVal + ((maxVal - minVal) * pos))
+				
+				SliderFill.Size = UDim2.new(pos, 0, 1, 0)
+				ValueLabel.Text = tostring(val)
+				currentVal = val
+
+				task.spawn(function()
+					pcall(callback, currentVal)
+				end)
+			end
+
+			SliderBar.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					draggingSlider = true
+					updateSlider(input)
+				end
+			end)
+
+			UserInputService.InputEnded:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					draggingSlider = false
+				end
+			end)
+
+			UserInputService.InputChanged:Connect(function(input)
+				if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					updateSlider(input)
+				end
+			end)
+
+			originalData[SliderFrame] = { Size = SliderFrame.Size, Position = SliderFrame.Position }
+
+			return {
+				Get = function()
+					return currentVal
+				end,
+				Set = function(val)
+					currentVal = math.clamp(val, minVal, maxVal)
+					local pos = (currentVal - minVal) / (maxVal - minVal)
+					SliderFill.Size = UDim2.new(pos, 0, 1, 0)
+					ValueLabel.Text = tostring(currentVal)
+					pcall(callback, currentVal)
+				end
+			}
+		end
+
 		return TabObj
 	end
 
