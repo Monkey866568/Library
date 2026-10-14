@@ -1,0 +1,330 @@
+--[=[
+    NVH GAMER - UI Library API (Clean Luau Version)
+]=]
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+local Library = {}
+Library.Theme = {
+	Background = Color3.fromRGB(0, 0, 0),
+	DarkSurface = Color3.fromRGB(31, 31, 31),
+	White = Color3.fromRGB(255, 255, 255),
+}
+
+-- Hàm Kéo Thả UI
+local function MakeDraggable(topbarObject, windowObject)
+	local dragging, dragInput, dragStart, startPos
+	topbarObject.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = windowObject.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then dragging = false end
+			end)
+		end
+	end)
+	topbarObject.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			local delta = input.Position - dragStart
+			windowObject.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		end
+	end)
+end
+
+function Library.new(titleText)
+	local ScreenGui = Instance.new("ScreenGui")
+	ScreenGui.Name = "MainGui"
+	ScreenGui.ResetOnSpawn = false
+	ScreenGui.Parent = PlayerGui
+
+	local MainFrame = Instance.new("Frame", ScreenGui)
+	MainFrame.Name = "UiFoundation"
+	MainFrame.Size = UDim2.new(0, 800, 0, 553)
+	MainFrame.Position = UDim2.new(0.2, 0, 0.18, 0)
+	MainFrame.BackgroundColor3 = Library.Theme.Background
+	MainFrame.BackgroundTransparency = 0.3
+	MainFrame.BorderSizePixel = 0
+	Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 3)
+	Instance.new("UIShadow", MainFrame)
+
+	local Container = Instance.new("Frame", MainFrame)
+	Container.Name = "UiFoundation2"
+	Container.Size = UDim2.new(0, 770, 0, 522)
+	Container.Position = UDim2.new(0.01875, 0, 0.02712, 0)
+	Container.BackgroundTransparency = 2
+	Container.BorderSizePixel = 0
+
+	local ContainerStroke = Instance.new("UIStroke", Container)
+	ContainerStroke.Color = Library.Theme.White
+	ContainerStroke.Transparency = 0.6
+	Instance.new("UICorner", Container).CornerRadius = UDim.new(0, 3)
+
+	-- Title Bar & Logo
+	local TitleBarFrame = Instance.new("Frame", Container)
+	TitleBarFrame.Size = UDim2.new(0, 770, 0, 40)
+	TitleBarFrame.BackgroundTransparency = 3
+	
+	local Logo = Instance.new("ImageLabel", Container)
+	Logo.Size = UDim2.new(0, 50, 0, 40)
+	Logo.Image = "rbxassetid://76513111278483"
+	Logo.BackgroundTransparency = 3
+
+	local TitleLabel = Instance.new("TextLabel", TitleBarFrame)
+	TitleLabel.Size = UDim2.new(0, 413, 0, 40)
+	TitleLabel.Position = UDim2.new(0.25, 0, 0, 0)
+	TitleLabel.BackgroundTransparency = 3
+	TitleLabel.Text = titleText or "NVH GAMER HUB"
+	TitleLabel.TextColor3 = Library.Theme.White
+	TitleLabel.TextSize = 20
+	TitleLabel.FontFace = Font.new("rbxasset://fonts/families/Creepster.json", Enum.FontWeight.Bold, Enum.FontStyle.Italic)
+
+	MakeDraggable(TitleBarFrame, MainFrame)
+
+	-- Sidebar Tab Section
+	local Sidebar = Instance.new("Frame", Container)
+	Sidebar.Name = "TabSection"
+	Sidebar.Size = UDim2.new(0, 200, 0, 465)
+	Sidebar.Position = UDim2.new(0.01, 0, 0.09, 0)
+	Sidebar.BackgroundColor3 = Library.Theme.Background
+	Sidebar.BackgroundTransparency = 0.3
+	Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 3)
+
+	local TabScroll = Instance.new("ScrollingFrame", Sidebar)
+	TabScroll.Size = UDim2.new(0, 200, 0, 463)
+	TabScroll.BackgroundTransparency = 3
+	TabScroll.ScrollBarThickness = 7
+	TabScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+	local TabLayout = Instance.new("UIListLayout", TabScroll)
+	TabLayout.Padding = UDim.new(0, 1)
+
+	-- Content Area
+	local ContentFrame = Instance.new("Frame", Container)
+	ContentFrame.Name = "MenuFrame"
+	ContentFrame.Size = UDim2.new(0, 548, 0, 465)
+	ContentFrame.Position = UDim2.new(0.28, 0, 0.09, 0)
+	ContentFrame.BackgroundColor3 = Library.Theme.Background
+	ContentFrame.BackgroundTransparency = 0.6
+	Instance.new("UICorner", ContentFrame).CornerRadius = UDim.new(0, 3)
+
+	local TabTitle = Instance.new("TextLabel", ContentFrame)
+	TabTitle.Name = "TabTitle"
+	TabTitle.Size = UDim2.new(0, 548, 0, 50)
+	TabTitle.BackgroundTransparency = 3
+	TabTitle.Text = "Function Section"
+	TabTitle.TextColor3 = Library.Theme.White
+	TabTitle.TextSize = 16
+	TabTitle.FontFace = Font.new("rbxasset://fonts/families/LuckiestGuy.json", Enum.FontWeight.Bold, Enum.FontStyle.Italic)
+
+	local FuncSection = Instance.new("Frame", ContentFrame)
+	FuncSection.Name = "FUNCTIONaLSECTION"
+	FuncSection.Size = UDim2.new(0, 500, 0, 400)
+	FuncSection.Position = UDim2.new(0.044, 0, 0.14, 0)
+	FuncSection.BackgroundColor3 = Library.Theme.Background
+	FuncSection.BackgroundTransparency = 0.4
+	Instance.new("UICorner", FuncSection).CornerRadius = UDim.new(0, 5)
+
+	local Window = {
+		Tabs = {},
+		ActiveTab = nil
+	}
+
+	-- API: Tạo Tab
+	function Window:CreateTab(tabName)
+		local TabButton = Instance.new("TextButton", TabScroll)
+		TabButton.Size = UDim2.new(0, 200, 0, 50)
+		TabButton.BackgroundTransparency = 3
+		TabButton.Text = tabName
+		TabButton.TextColor3 = Library.Theme.White
+		TabButton.TextSize = 15
+		TabButton.FontFace = Font.new("rbxasset://fonts/families/Bangers.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+
+		local ActiveBar = Instance.new("Frame", TabButton)
+		ActiveBar.Name = "Bar"
+		ActiveBar.Size = UDim2.new(0, 8, 0, 31)
+		ActiveBar.Position = UDim2.new(0, 0, 0.18, 0)
+		ActiveBar.BackgroundColor3 = Library.Theme.White
+		ActiveBar.Visible = false
+		Instance.new("UICorner", ActiveBar).CornerRadius = UDim.new(0, 5)
+
+		local ContainerScroll = Instance.new("ScrollingFrame", FuncSection)
+		ContainerScroll.Name = tabName .. "_Scroll"
+		ContainerScroll.Size = UDim2.new(0, 500, 0, 400)
+		ContainerScroll.BackgroundTransparency = 3
+		ContainerScroll.ScrollBarThickness = 10
+		ContainerScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+		ContainerScroll.Visible = false
+
+		local MainLayout = Instance.new("UIListLayout", ContainerScroll)
+		MainLayout.Padding = UDim.new(0, 8)
+
+		MainLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+			ContainerScroll.CanvasSize = UDim2.new(0, 0, 0, MainLayout.AbsoluteContentSize.Y + 20)
+		end)
+
+		local Tab = { Scroll = ContainerScroll }
+
+		TabButton.MouseButton1Click:Connect(function()
+			for _, t in pairs(Window.Tabs) do
+				t.Button.Bar.Visible = false
+				t.Scroll.Visible = false
+			end
+			ActiveBar.Visible = true
+			ContainerScroll.Visible = true
+			TabTitle.Text = tabName
+		end)
+
+		Tab.Button = TabButton
+		table.insert(Window.Tabs, Tab)
+
+		if #Window.Tabs == 1 then
+			ActiveBar.Visible = true
+			ContainerScroll.Visible = true
+			TabTitle.Text = tabName
+		end
+
+		-- API: Tạo Nút Bấm (Button)
+		function Tab:CreateButton(text, callback)
+			local ButtonFrame = Instance.new("TextLabel", ContainerScroll)
+			ButtonFrame.Size = UDim2.new(0, 489, 0, 50)
+			ButtonFrame.BackgroundColor3 = Library.Theme.DarkSurface
+			ButtonFrame.BackgroundTransparency = 0.1
+			ButtonFrame.Text = text
+			ButtonFrame.TextColor3 = Library.Theme.White
+			ButtonFrame.TextSize = 18
+			ButtonFrame.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Italic)
+			Instance.new("UICorner", ButtonFrame)
+
+			local TapBtn = Instance.new("TextButton", ButtonFrame)
+			TapBtn.Size = UDim2.new(0, 113, 0, 35)
+			TapBtn.Position = UDim2.new(0.73, 0, 0.14, 0)
+			TapBtn.BackgroundColor3 = Library.Theme.White
+			TapBtn.Text = "Tap"
+			TapBtn.TextColor3 = Library.Theme.Background
+			TapBtn.TextSize = 20
+			TapBtn.FontFace = Font.new("rbxasset://fonts/families/Balthazar.json", Enum.FontWeight.Bold, Enum.FontStyle.Italic)
+			Instance.new("UICorner", TapBtn).CornerRadius = UDim.new(1, 0)
+
+			TapBtn.MouseButton1Click:Connect(function()
+				if callback then callback() end
+			end)
+		end
+
+		-- API: Tạo Nút Bật/Tắt (Toggle)
+		function Tab:CreateToggle(text, callback)
+			local ToggleFrame = Instance.new("Frame", ContainerScroll)
+			ToggleFrame.Size = UDim2.new(0, 489, 0, 50)
+			ToggleFrame.BackgroundColor3 = Library.Theme.DarkSurface
+			ToggleFrame.BackgroundTransparency = 0.1
+			Instance.new("UICorner", ToggleFrame)
+
+			local Label = Instance.new("TextLabel", ToggleFrame)
+			Label.Size = UDim2.new(0, 446, 0, 50)
+			Label.BackgroundTransparency = 3
+			Label.Text = text
+			Label.TextColor3 = Library.Theme.White
+			Label.TextSize = 15
+			Label.FontFace = Font.new("rbxasset://fonts/families/DenkOne.json", Enum.FontWeight.Bold, Enum.FontStyle.Italic)
+
+			local Border = Instance.new("Frame", ToggleFrame)
+			Border.Size = UDim2.new(0, 30, 0, 30)
+			Border.Position = UDim2.new(0.912, 0, 0.2, 0)
+			Border.BackgroundColor3 = Library.Theme.Background
+			Instance.new("UICorner", Border).CornerRadius = UDim.new(0, 5)
+
+			local Btn = Instance.new("TextButton", Border)
+			Btn.Size = UDim2.new(0, 20, 0, 20)
+			Btn.Position = UDim2.new(0.166, 0, 0.166, 0)
+			Btn.BackgroundTransparency = 3
+			Btn.Text = ""
+
+			local StatusFrame = Instance.new("Frame", Btn)
+			StatusFrame.Size = UDim2.new(0, 20, 0, 20)
+			StatusFrame.BackgroundColor3 = Library.Theme.White
+			StatusFrame.Visible = false
+			Instance.new("UICorner", StatusFrame).CornerRadius = UDim.new(0, 3)
+
+			local toggled = false
+			Btn.MouseButton1Click:Connect(function()
+				toggled = not toggled
+				StatusFrame.Visible = toggled
+				if callback then callback(toggled) end
+			end)
+		end
+
+		-- API: Tạo Thanh Trượt (Slider)
+		function Tab:CreateSlider(text, min, max, default, callback)
+			local SliderFrame = Instance.new("Frame", ContainerScroll)
+			SliderFrame.Size = UDim2.new(0, 489, 0, 70)
+			SliderFrame.BackgroundColor3 = Library.Theme.DarkSurface
+			SliderFrame.BackgroundTransparency = 0.1
+			Instance.new("UICorner", SliderFrame)
+
+			local Label = Instance.new("TextLabel", SliderFrame)
+			Label.Size = UDim2.new(0, 338, 0, 35)
+			Label.BackgroundTransparency = 3
+			Label.Text = text
+			Label.TextColor3 = Library.Theme.White
+			Label.TextSize = 16
+
+			local ValLabel = Instance.new("TextLabel", SliderFrame)
+			ValLabel.Size = UDim2.new(0, 151, 0, 35)
+			ValLabel.Position = UDim2.new(0.69, 0, 0, 0)
+			ValLabel.BackgroundTransparency = 3
+			ValLabel.Text = tostring(default or min)
+			ValLabel.TextColor3 = Library.Theme.White
+
+			local SliderBar = Instance.new("Frame", SliderFrame)
+			SliderBar.Size = UDim2.new(0, 489, 0, 7)
+			SliderBar.Position = UDim2.new(0, 0, 0.7, 0)
+			SliderBar.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
+			Instance.new("UICorner", SliderBar)
+
+			local Fill = Instance.new("Frame", SliderBar)
+			Fill.Size = UDim2.new((default - min)/(max - min), 0, 1, 0)
+			Fill.BackgroundColor3 = Library.Theme.White
+			Instance.new("UICorner", Fill)
+
+			local dragging = false
+			local function Update(inputX)
+				local percent = math.clamp((inputX - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
+				Fill.Size = UDim2.new(percent, 0, 1, 0)
+				local val = math.floor(min + (max - min) * percent)
+				ValLabel.Text = tostring(val)
+				if callback then callback(val) end
+			end
+
+			SliderBar.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					dragging = true
+					Update(input.Position.X)
+				end
+			end)
+
+			UserInputService.InputEnded:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
+			end)
+
+			UserInputService.InputChanged:Connect(function(input)
+				if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					Update(input.Position.X)
+				end
+			end)
+		end
+
+		return Tab
+	end
+
+	return Window
+end
+
+return Library
